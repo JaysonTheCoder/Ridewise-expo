@@ -40,6 +40,12 @@
         "projectId": "50855f6f-a7c7-4128-900d-dd1f27646b7d"
       }
     },
-    "owner": "jaysonthecoder"
+    "owner": "jaysonthecoder",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/50855f6f-a7c7-4128-900d-dd1f27646b7d"
+    }
   }
 }

@@ -8,6 +8,9 @@ npm-debug.*
 *.key
 *.mobileprovision
 *.orig.*
+# ignores all .env files
+.env*
+
 web-build/
 
 # macOS

@@ -28,13 +28,14 @@ const App = () => {
       <MapViewProvider>
         <AuthProvider>
           <Stack.Navigator>
-            <Stack.Screen name="Layout/Form/Login" options={{headerShown: false}} component={Login}/>
+            <Stack.Screen name="Layout/Screens/Client/HomescreenClient" options={{headerShown: false}} component={HomescreenClient}/>
             <Stack.Screen name='Layout/Form/LoginOperator' options={{ headerShown: false}} component={LoginOperator}/>
             <Stack.Screen name="Layout/Screens/Operator/HomescreenOperator" options={{headerShown: false}} component={HomescreenOperator}/>
             <Stack.Screen name='Layout/Form/Register' options={{ headerShown: false}} component={Register}/>
             <Stack.Screen name='Layout/Form/RegisterOperator' options={{ headerShown: false}} component={RegisterOperator}/>
-            <Stack.Screen name="Layout/Screens/Client/HomescreenClient" options={{headerShown: false}} component={HomescreenClient}/>
+            
             <Stack.Screen name='components/Map' options={{headerShown: false}} component={OperatorsMap}/>
+            <Stack.Screen name="Layout/Form/Login" options={{headerShown: false}} component={Login}/>
           </Stack.Navigator>
         </AuthProvider>
       </MapViewProvider>

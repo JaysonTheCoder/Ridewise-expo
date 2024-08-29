@@ -20,19 +20,17 @@ const HomescreenOperator = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const isFocused = useIsFocused()
-  const { user } = useContext(AuthContext)
-  const { id } = user
+  const { id, driver, bus_number, status } = useContext(AuthContext)
   const [ openModal, setOpenModal ] = useState(false)
   const auth = getAuth()
   const navigation = useNavigation()
   const handleModalClose = function() {
-    console.log("close: ", user);
     setOpenModal(false)
   }
   const handleSignOut = async function() {
       try {
         await signOut(auth)
-        await navigation.replace('Layout/Form/Login')
+        await navigation.replace('Layout/Screens/Client/HomescreenClient')
         console.log("user signed out")
         
       }catch(err) {
@@ -73,11 +71,12 @@ const HomescreenOperator = () => {
         },
         (newLocation) => {
           setLocation(newLocation.coords);
-          updateLocationInFirestore(newLocation.coords);
+          console.log("nedata");
+          if(id) updateLocationInFirestore(newLocation.coords);
+          
           console.log(newLocation.coords);
         }
       )
-
       return () => {
         locationSubscription.remove();
       };
@@ -109,9 +108,9 @@ const HomescreenOperator = () => {
                   <Image style={[{height: 80, width: 80, borderRadius: 50}]} source={Logo}/>
                 </View>
                 <View style={{ width: '100%', justifyContent: 'center', paddingLeft: 10}}>
-                  <Text style={{fontFamily: "Poppins-Regular", fontSize: 20}}>{ user.driver ? user.driver:'Default N.' }</Text>
-                  <Text style={{fontFamily: "Poppins-Regular", fontSize: 12}}>bus number: { user.bus_number ? user.bus_number:'Unavailable' }</Text>
-                  {/* <Text style={{fontFamily: "Poppins-Regular", fontSize: 10}}>status: <Text style={{color: `${ user.isOnline ? 'limegreen':'red' }`}}>{ user.isOnline ? 'Online':'Offline' }</Text></Text> */}
+                  <Text style={{fontFamily: "Poppins-Regular", fontSize: 20}}>{ driver ? driver:'Default N.' }</Text>
+                  <Text style={{fontFamily: "Poppins-Regular", fontSize: 12}}>bus number: {bus_number ? bus_number:'Unavailable' }</Text>
+                  <Text style={{fontFamily: "Poppins-Regular", fontSize: 10}}>status: <Text style={{color: `${ status ? 'limegreen':'red' }`}}>{ status ? 'Online':'Offline' }</Text></Text>
                 </View>
               </View>
 
@@ -128,7 +127,7 @@ const HomescreenOperator = () => {
             longitudeDelta: 0.1,
           }}
         >
-          <Marker on coordinate={{ latitude: location.latitude, longitude: location.longitude }}>
+          <Marker coordinate={{ latitude: location.latitude, longitude: location.longitude }}>
             <Image style={{height: 40, width: 40}} source={require('../../../../assets/images/New Project 1 [C24A8F0].png')}/>
           </Marker>
         </MapView>
@@ -160,8 +159,8 @@ const HomescreenOperator = () => {
                   <View style={[{width: '90%', height: '90%', alignItems: 'center', flexDirection: 'row', position: 'relative'}]}>
                     <Image source={Logo} style={{width: 50, height: 50, borderRadius: 50}}/>
                     <View style={{ marginLeft: 15}}>
-                      <Text style={{color: '#F4B446', fontFamily: 'Poppins-Regular', fontSize: 20}}>{ user.bus_number ? user.bus_number:'Unavailable' } <Text style={{color: '#000', fontSize: 13}}>Operator.</Text></Text>
-                      <Text style={{fontSize: 11, color: '#00000090'}}>{  user.driver ? user.driver:'Default N.' }</Text>
+                      <Text style={{color: '#F4B446', fontFamily: 'Poppins-Regular', fontSize: 20}}>{ bus_number ? bus_number:'Unavailable' } <Text style={{color: '#000', fontSize: 13}}>Operator.</Text></Text>
+                      <Text style={{fontSize: 11, color: '#00000090'}}>{  driver ? driver:'Default N.' }</Text>
                     </View>
                     <View style={{position: 'absolute', width: '20%', right: 0, height: '70%', alignItems: 'center', justifyContent: 'center'}}>
                         <Pressable style={{color: '#F4B446', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center'}} onPress={()=> handleOpen() }>

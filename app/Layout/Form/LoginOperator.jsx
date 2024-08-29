@@ -22,7 +22,7 @@ const LoginOperator = () => {
     const [ driver_ID, setDriver_ID ] = React.useState('')
     const [ loading, setLoading ] = React.useState(false)
     const [ errorMessage, setErrorMsg ] = React.useState('')
-    const { setUser } = useContext(AuthContext)
+    const { setID, setDriver, setStatus, setBusNumber } = useContext(AuthContext)
     const navigation = useNavigation()
     const handleSubmit = async function() {
         // console.log("data", JSON.stringify(userSnap.data()));
@@ -31,25 +31,21 @@ const LoginOperator = () => {
             setLoading(true)
             const useRef = doc(db, 'bus_location', driver_ID )
             const userSnap = await getDoc(useRef)
-            const { id, bus_number, driver, isOnline } = userSnap.data()
+            const data = userSnap.data()
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            if ( userCredential && data ) {
+            if ( userCredential && data.id ) {
                 setLoading(false)
-                console.log(data) 
+                setID(data.id)
+                setDriver(data.driver)
+                setStatus(data.status)
+                setBusNumber(data.bus_number)
                 navigation.replace('Layout/Screens/Operator/HomescreenOperator');
                 updateDoc(userSnap, {
                     isOnline: true
                 })
-                setUser({
-                    id: id,
-                    driver: driver,
-                    isOnline: isOnline,
-                    bus_number: bus_number
-                })
             }else {
                 setLoading(false)
                 setErrorMsg('invalid credentials')
-                return
             }
 
         }catch(err) {
@@ -103,19 +99,19 @@ const LoginOperator = () => {
             width: '100%',
             height: '100%',
             zIndex: 2
-        }} color="#F4B446" size={60}/>}
+        }} color="##112A46" size={60}/>}
 
         <View style={ styles.title }>
             <View style={{
                 fontSize: 35,
-                color: '#F4B446',
+                color: '#112A46',
                 fontFamily: 'Poppins-Regular',
                 flexDirection: 'row',
-                alignItems: 'center',
+                alignItems: 'center'
             }}>
                 <Text style={{
                     fontSize: 35,
-                    color: '#F4B446',
+                    color: '#8BBBEE',
                     fontFamily: 'Poppins-Regular',
                     width: '70%',
                     justifyContent: 'center'
@@ -127,9 +123,9 @@ const LoginOperator = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                 }}>
-                    <Pressable onPress={()=> navigation.navigate('Layout/Form/Login')}>
+                    {/* <Pressable onPress={()=> navigation.navigate('Layout/Form/Login')}>
                         <Text style={{textDecorationLine: 'underline'}}>Commuter</Text>
-                    </Pressable>
+                    </Pressable> */}
                 </View>
             </View>
             <Text style={{
@@ -149,17 +145,10 @@ const LoginOperator = () => {
                 placeholder='Driver ID'
                 style={ [
                     {
-                        borderColor: '#00000001',
+                        borderColor: '#00000009',
                         borderWidth: 1,
-                        height: 65,
-                        width: '100%',
-                        paddingLeft: 40,
-                        fontSize: 18,
-                        backgroundColor: '#00000002',
-                        borderRadius: 5,
-                        margin: 15,
-                        fontFamily: 'Poppins-Regular',
-                    }] }
+                        backgroundColor: '#00000002'
+                    }, styles.input] }
                 value={ driver_ID }
                 onChangeText={ setDriver_ID }
             />
@@ -192,15 +181,15 @@ const LoginOperator = () => {
                     <Pressable
                         style={({ pressed }) => [
                         {
-                            backgroundColor: pressed ? '#fff' : '#F4B446', 
+                            backgroundColor: pressed ? '#fff' : '#8BBBEE', 
                             borderWidth: 1,
-                            borderColor: '#F4B446'
+                            borderColor: '#8BBBEE'
                         },
                         styles.button,
                         ]}
                         onPress={handleSubmit}
                     >
-                        <Text style={{fontSize: 15, color: '#FFF', textTransform: 'uppercase'}}>signin</Text>
+                        <Text style={{fontSize: 15, color: '#112a46', textTransform: 'uppercase'}}>signin</Text>
                     </Pressable>
                 </View>
                 {/* <View style={{ height: '100%', flexGrow: 5, alignItems: 'center', justifyContent: 'center'}}>
@@ -231,14 +220,14 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         paddingLeft: 20,
-        paddingTop: 15
+        paddingTop: 15,
     },
     form: {
         width: '90%',
         height: 350,
         display: 'flex',
         alignItems: 'center',
-        padding: 10
+        padding: 10,
     },
     input: {
         height: 65,

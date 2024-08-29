@@ -1,23 +1,29 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { doc, onSnapshot, collection } from 'firebase/firestore'
 import { db } from '../../../../firebaseConfig'
 import OperatorCards from '../../../components/operatorCards'
 import LoadingScreen from '../../../components/LoadingScreen'
+import { useNavigation } from 'expo-router'
 import OfflineScreen from '../../../components/OfflineScreen'
+import { MaterialIcons } from '@expo/vector-icons'
+import LottieView from 'lottie-react-native'
 const HomescreenClient = () => {
   const [loading, setLoading] = useState(false)
+  const [fetchingData, setFetchingData ] = useState(false)
   const operators = useRef([])
-
+  const navigation = useNavigation()
   const [documentsData, setDocumentIds] = useState([]);
   useEffect(() => {
+    setFetchingData(true)
     const unsubscribe = onSnapshot(collection(db, 'bus_location'), (querySnapshot) => {
       const ids = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data()
       }));
       setDocumentIds(ids)
+      setFetchingData(false)
     }, (error) => {
       console.error('Error fetching document IDs: ', error);
       setLoading(false)
@@ -28,33 +34,47 @@ const HomescreenClient = () => {
 
   return (
     <View style={styles.container}>
-      { loading && <LoadingScreen/>}
-      <StatusBar backgroundColor='#000'/>
+      { loading && <LoadingScreen />}
       <View style={styles.nav}>
         <View style={{
-          width: '90%',
           height: '90%',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          flex: 1,
+          flexBasis: '80%'
         }}>
-          <Text style={{color: '#fff', fontFamily: 'Poppins-Regular', fontSize: 35, height: 50}}>Ridewise</Text>
-          <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, marginLeft: 5, color: '#f9f9f9'}}>have a real-time update on Cat-Express bus</Text>
+          <Text style={{color: '#112A46', fontFamily: 'Poppins-Regular', fontSize: 35, height: 50}}>Ridewise</Text>
+          <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, marginLeft: 5, color: '#112A46'}}>have a real-time update on Cat-Express bus</Text>
+        </View>
+        <View style={{
+          flex: 1,
+          flexBasis:'20%',
+          alignItems: 'flex-end',
+          justifyContent: "center",
+          height: '90%',
+          paddingRight: 18
+        }}>
+          <Pressable onPress={()=> navigation.navigate('Layout/Form/LoginOperator')}>
+            <MaterialIcons color="#112A46" name="menu" size={25}/>
+          </Pressable>
         </View>
       </View>
       <View style={styles.content}>
         {
-          operators &&
-            documentsData.map( item => {
+          fetchingData ?
+          <OfflineScreen />:documentsData.map( item => {
               return (
                 <View>
                   {
-                    item ? 
-                    <OperatorCards docID={item.id} route={item.route} bus_number={item.bus_number} status={ item.isOnline ? 'online':'offline'} />:<OfflineScreen />
+                    item &&
+                    <OperatorCards docID={item.id} route={item.route} bus_number={item.bus_number} status={ item.isOnline ? 'online':'offline'}/>
                   }
                 </View>
               )
             })
         }
       </View>
+      
+      <StatusBar backgroundColor='#000'/>
     </View>
   )
 }
@@ -72,11 +92,13 @@ const styles = StyleSheet.create({
     height: 130,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: '#F4B446',
+    backgroundColor: '#8BBBEE',
     shadowColor: "#000",
     shadowOffset: {width: 0, height: 10},
     shadowRadius: 150,
-    elevation: 15
+    elevation: 15,
+    flexDirection: 'row',
+    padding: 20
   },
   content: {
     height: '100%',
